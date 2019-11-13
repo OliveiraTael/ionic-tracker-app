@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {Validators, FormBuilder, FormGroup, Form} from '@angular/forms';
 import {timer, Subscription} from 'rxjs';
 
+import {DataService} from '../data.service';
+import { Task } from '../models/task.interface';
+
 @Component({
   selector: 'app-tracker',
   templateUrl: './tracker.page.html',
@@ -18,7 +21,8 @@ export class TrackerPage implements OnInit {
   time:number;
 
   constructor(
-    private formBuilder:FormBuilder
+    private formBuilder:FormBuilder,
+    private dataService:DataService
   ) { }
 
   ngOnInit() {
@@ -42,8 +46,20 @@ export class TrackerPage implements OnInit {
     this.stopTime = new Date().getTime();
 
     this.timerSub.unsubscribe();
+    this.save();
 
     console.log(this.stopTime);
+  }
+
+  save(){
+    let task:Task = {
+      name: this.taskForm.get('name').value,
+      start: this.startTime,
+      stop: this.stopTime
+    }
+
+    this.dataService.addToList(task);
+
   }
 
 }
